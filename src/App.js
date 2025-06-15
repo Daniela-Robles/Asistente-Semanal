@@ -9,8 +9,8 @@ export default function App() {
   const [plannedTaskIds, setPlannedTaskIds] = useState([]);
 
   // Agregar tarea simple (meta semanal)
-  const addTask = (taskText) => {
-    const newTask = { id: Date.now(), text: taskText };
+  const addTask = ({ text, priority }) => {
+    const newTask = { id: Date.now(), text, priority };
     setTasks((prev) => [...prev, newTask]);
   };
 
@@ -24,6 +24,7 @@ export default function App() {
       .trim();
   };
 
+  // Generar planificación o añadir nuevas tareas
   const handleGenerate = async () => {
     const unplannedTasks = tasks.filter((t) => !plannedTaskIds.includes(t.id));
 
@@ -80,10 +81,37 @@ export default function App() {
     }
   };
 
+  // Limpiar tareas y calendario
+  const handleNewCalendar = () => {
+    const confirm = window.confirm(
+      "¿Estás seguro de que deseas eliminar el calendario actual y comenzar uno nuevo?"
+    );
+    if (confirm) {
+      setTasks([]);
+      setPlan(null);
+      setPlannedTaskIds([]);
+    }
+  };
+
   return (
     <div>
       <h1>Asistente Semanal Inteligente</h1>
       <TaskInput addTask={addTask} handleGenerate={handleGenerate} />
+
+      {plan && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <button onClick={handleNewCalendar} className="new-calendar-btn">
+            🗓️ Generar nuevo calendario
+          </button>
+        </div>
+      )}
+
       <WeekView plan={plan} />
     </div>
   );
